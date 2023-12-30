@@ -35,7 +35,7 @@ if __name__ == "__main__":
     parse_sentences(sentences, parser)
 
 
-
+    
     print("\033[1m10 sentences with nltk.parse.generate.generate using starting symbole 'NP'\033[0m") 
     start = Nonterminal('NP')
     print_sentences(generate, grammer=grammer, start=start, n=10)
