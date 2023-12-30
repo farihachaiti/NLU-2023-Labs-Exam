@@ -3,10 +3,9 @@
 
 from sklearn.model_selection import cross_validate
 from sklearn.metrics import classification_report
+from sklearn.datasets import fetch_20newsgroups
 
 def SVM_evaluation(clf, data, split):
-    
-
     # for each training/testing fold
     for train_index, test_index in split.split(data.data, data.target):
         # train (fit) model
@@ -23,3 +22,11 @@ def SVM_evaluation(clf, data, split):
         
     print(classification_report(refs, hyps, target_names=data.target_names))
     print(sum(scores['test_f1_weighted'])/len(scores['test_f1_weighted']))
+
+
+def extract_features(vectorizer, categories):
+    data = fetch_20newsgroups(subset='train', categories=categories)
+    data.data = vectorizer.fit_transform(data.data)
+    data.data.shape
+
+    return data

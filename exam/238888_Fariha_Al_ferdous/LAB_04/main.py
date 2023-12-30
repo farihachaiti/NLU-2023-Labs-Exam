@@ -42,31 +42,11 @@ if __name__ == "__main__":
 
     print("\033[1mAccuracy of NgramTagger:\033[0m {:6.4f}".format(accuracy))
 
-    mapping_spacy_to_NLTK = {
-        "ADJ": "ADJ",
-        "ADP": "ADP",
-        "ADV": "ADV",
-        "AUX": "VERB",
-        "CCONJ": "CONJ",
-        "DET": "DET",
-        "INTJ": "X",
-        "NOUN": "NOUN",
-        "NUM": "NUM",
-        "PART": "PRT",
-        "PRON": "PRON",
-        "PROPN": "NOUN",
-        "PUNCT": ".",
-        "SCONJ": "CONJ",
-        "SYM": "X",
-        "VERB": "VERB",
-        "X": "X"
-    }
-
-
+    #loading spacy
     nlp = en_core_web_sm.load()
     nlp.tokenizer = Tokenizer(nlp.vocab)
 
-    print("\033[1mSpacy to NLTK Tag Mapping:\033[0m {}".format(mapping_spacy_to_NLTK))
+    print("\033[1mSpacy to NLTK Tag Mapping:\033[0m {}".format(get_mapping_spacy_to_NLTK()))
 
 
     print("\033[1mTagging with Spacy\033[0m")

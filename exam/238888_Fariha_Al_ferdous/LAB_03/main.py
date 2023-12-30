@@ -23,7 +23,7 @@ if __name__ == "__main__":
     # Train the model 
     fdist = FreqDist(chain.from_iterable(macbeth_oov_sents))
 
-
+    #Custom StupidBackoff algorithm with alpha=0.4
     stupid = MyStupidBackoff(macbeth_oov_sents, fdist, 2, 0.4)
     stupid.fit(padded_ngrams_oov, flat_text_oov)
 
