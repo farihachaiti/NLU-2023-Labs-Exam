@@ -43,38 +43,38 @@ if __name__ == "__main__":
 
 
 
-    n_epochs = 100
-    patience = 3
-    losses_train = []
-    losses_dev = []
-    sampled_epochs = []
-    best_ppl = math.inf
-    best_model = model
-    best_loss = []
-    pbar = tqdm(range(1,n_epochs))
-    for epoch in pbar: 
-        if len(best_loss)>5:
-            optimizer = optim.ASGD(model.parameters(), lr=lr, t0=0, lambd=0., weight_decay=1.2e-6)
+n_epochs = 100
+patience = 3
+losses_train = []
+losses_dev = []
+sampled_epochs = []
+best_ppl = math.inf
+best_model = model
+best_loss = []
+pbar = tqdm(range(1,n_epochs))
+for epoch in pbar: 
+    if len(best_loss)>5:
+        optimizer = optim.ASGD(model.parameters(), lr=lr, t0=0, lambd=0., weight_decay=1.2e-6)
+    else:
+        optimizer = optim.AdamW(model.parameters(), lr=lr)
+    loss = train_loop(train_loader, optimizer, criterion_train, model, clip)
+    if epoch % 1 == 0:
+        sampled_epochs.append(epoch)
+        losses_train.append(np.asarray(loss).mean())
+        ppl_dev, loss_dev = eval_loop(dev_loader, criterion_eval, model)
+        losses_dev.append(np.asarray(loss_dev).mean())
+        pbar.set_description("PPL: %f" % ppl_dev)
+        if  ppl_dev < best_ppl: # the lower, the better
+            best_ppl = ppl_dev
+            best_model = copy.deepcopy(model).to('cpu')
+            patience = 3
         else:
-            optimizer = optim.AdamW(model.parameters(), lr=lr)
-        loss = train_loop(train_loader, optimizer, criterion_train, model, clip)
-        if epoch % 1 == 0:
-            sampled_epochs.append(epoch)
-            losses_train.append(np.asarray(loss).mean())
-            ppl_dev, loss_dev = eval_loop(dev_loader, criterion_eval, model)
-            losses_dev.append(np.asarray(loss_dev).mean())
-            pbar.set_description("PPL: %f" % ppl_dev)
-            if  ppl_dev < best_ppl: # the lower, the better
-                best_ppl = ppl_dev
-                best_model = copy.deepcopy(model).to('cpu')
-                patience = 3
-            else:
-                patience -= 1
-                
-            if patience <= 0: # Early stopping with patience
-                break # Not nice but it keeps the code clean
-        best_loss.append(loss)                      
-    best_model.to(device)
-    final_ppl,  _ = eval_loop(test_loader, criterion_eval, best_model)   
-    print("\033[1mPPL using LSTM with variational dropout, tied weights and non-monotonic ASGD:\033[0m")
-    print('Test ppl: ', final_ppl)
+            patience -= 1
+            
+        if patience <= 0: # Early stopping with patience
+            break # Not nice but it keeps the code clean
+    best_loss.append(loss)                      
+best_model.to(device)
+final_ppl,  _ = eval_loop(test_loader, criterion_eval, best_model)   
+print("\033[1mPPL using LSTM with variational dropout, tied weights and non-monotonic ASGD:\033[0m")
+print('Test ppl: ', final_ppl)
