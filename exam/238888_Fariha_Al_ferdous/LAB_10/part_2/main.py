@@ -10,10 +10,8 @@ import torch.optim as optim
 if __name__ == "__main__":
     #Wrtite the code to load the datasets and to run your functions
     # Print the results
-    
 
-
-
+    #train and evaluate the custom BERT model
     lr = 0.0001 # learning rate
     e = 1e-08
 
@@ -46,6 +44,8 @@ if __name__ == "__main__":
     result = model.evaluate([test_input_ids,test_attention_masks], (test_slots, test_labels))
     # Save the model to the bin file
     model.save("bin/saved_model")
+
+    #results
     print("\033[1mResults of BERT MODEL:\033[0m")
     print(f'Loss: {result[0]}')
     print(f'Slot Loss: {result[1]}')

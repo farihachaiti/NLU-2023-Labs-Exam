@@ -12,7 +12,7 @@ from tqdm import tqdm
 if __name__ == "__main__":
     #Wrtite the code to load the datasets and to run your functions
     # Print the results
-    
+    #train and test modified model ModelAIS
 
     hid_size = 200
     emb_size = 300
@@ -63,6 +63,8 @@ if __name__ == "__main__":
 
     # Save the model to the bin file
     torch.save(model.state_dict(), bin_file_path)
+
+    #results
     print("\033[1mResults of Modified model MODELIAS:\033[0m")
     print('Slot F1: ', results_test['total']['f'])
     print('Intent Accuracy:', intent_test['accuracy'])

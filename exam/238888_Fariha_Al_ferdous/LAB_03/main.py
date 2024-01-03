@@ -13,6 +13,8 @@ from nltk.corpus import gutenberg
 if __name__ == "__main__":
     #Wrtite the code to load the datasets and to run your functions
     # Print the results
+    
+    #preprocessing
     macbeth_sents = [[w.lower() for w in sent] for sent in gutenberg.sents('shakespeare-macbeth.txt')]
     macbeth_words = flatten(macbeth_sents)
     # Compute vocab 

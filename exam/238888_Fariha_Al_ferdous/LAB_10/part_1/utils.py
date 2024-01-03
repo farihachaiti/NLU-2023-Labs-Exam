@@ -14,6 +14,8 @@ from torch.utils.data import DataLoader
 import torch
 import torch.utils.data as data
 
+#preprocessing datasets
+
 def load_data(path):
     '''
         input: path/to/data

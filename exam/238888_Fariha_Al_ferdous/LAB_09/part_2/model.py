@@ -7,6 +7,7 @@ import numpy as np
 from functions import *
 from utils import *
 
+#configuring variational droput
 class VariationalDropout(nn.Module):
     def __init__(self, log_alpha=-3.):
         super(VariationalDropout, self).__init__()
@@ -36,7 +37,8 @@ class LM_LSTM(nn.Module):
         self.pad_token = pad_index
         # Linear layer to project the hidden layer to our output space 
         self.output = nn.Linear(hidden_size, output_size)
-        self.v_dropout = VariationalDropout()
+        self.v_dropout = VariationalDropout() #applying the configured variational dropout
+        #tying weights if hidden size and embedded size are not equal
         if tie_weights:
             if hidden_size != emb_size:
                 raise ValueError('When using the tied flag, nhid must be equal to emsize')

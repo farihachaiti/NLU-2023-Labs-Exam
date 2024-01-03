@@ -4,7 +4,7 @@ from nltk.corpus import wordnet
 from nltk import pos_tag
 from nltk.corpus import sentiwordnet as swn
 
-
+#preprocessing datasets
 pos2wn = {"NOUN": "n", "VERB": "v", "ADJ": "a", "ADV": "r"}
 
 def lol2str(doc):

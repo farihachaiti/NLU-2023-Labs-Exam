@@ -17,6 +17,8 @@ from nltk.corpus import subjectivity
 nltk.download('vader_lexicon')
 from nltk.sentiment.vader import SentimentIntensityAnalyzer, VaderConstants
 
+#preprocessing datasets
+
 analyzer = SentimentIntensityAnalyzer()
 doc = subjectivity.sents()
 
@@ -28,8 +30,7 @@ def load_data(path):
     '''
     dataset = []
     with open(path, 'r', encoding='utf-8') as f:
-        #dataset = f.readlines()
-    #with open(file_path, 'r') as file:
+
         for line in f:
             # Use regular expression to find the sentence before the symbol
             match = re.search(r'(.*?){}'.format(re.escape('####')), line)
@@ -66,7 +67,7 @@ def extract(doc):
 
 train_raw = load_data(os.path.join('dataset/laptop14_train.txt'))
 test_raw = load_data(os.path.join('dataset/laptop14_test.txt'))
-#print(nlp(' '.join(train_raw)))
+
 aspects_train = extract(nlp(' '.join(train_raw)))
 
 aspects_test = extract(nlp(' '.join(test_raw)))

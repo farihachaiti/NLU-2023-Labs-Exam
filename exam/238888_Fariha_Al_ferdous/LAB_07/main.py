@@ -11,9 +11,11 @@ nltk.download('conll2002')
 if __name__ == "__main__":
     #Wrtite the code to load the datasets and to run your functions
     # Print the results
+
     print("\033[1mconll2002 Corpus\033[0m")
     print(conll2002.iob_sents('esp.train')[0])
 
+    #performing variable features and train and testing CRF model on these
     print("\033[1mBaseline using the features in sent2spacy_features:\033[0m")
     # let's get only word and iob-tag
     trn_sents = [[(text, pos, iob) for text, pos, iob in sent] for sent in conll2002.iob_sents('esp.train')]

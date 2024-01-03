@@ -21,6 +21,7 @@ if __name__ == "__main__":
 
 
     # Let's create mapping from convenience
+    #preprocessing
     mapping = {
         'interest_1': 'interest.n.01',
         'interest_2': 'interest.n.03',
@@ -61,18 +62,26 @@ if __name__ == "__main__":
     lblencoder.fit(lbls)
     labels = lblencoder.transform(lbls)
 
+    #extending collocational features
     data_col = [extend_collocational_features(inst) for inst in senseval.instances('interest.pos')]
+    #results
     print(data_col[0])
 
 
     dvectorizer = DictVectorizer(sparse=False)
     dvectors = dvectorizer.fit_transform(data_col)
 
+    #Concatenating BOW and new collocational feature vectors
     uvectors = np.concatenate((vectors.toarray(), dvectors), axis=1)
+
+    #evaluation
     scores = cross_validate(classifier, uvectors, labels, cv=stratified_split, scoring=['f1_micro'])
+
+    #results
     print("\033[1mEvaluation score for Concatenated BAO and Extended Collocational Feature Vectors:\033[0m")
     print("{:.3f}".format(sum(scores['test_f1_micro'])/len(scores['test_f1_micro'])))
 
+    #evaluating original lesk and lesk similarity
 
     for i, inst in enumerate(senseval.instances('interest.pos')):
         txt = [t[0] for t in inst.context]

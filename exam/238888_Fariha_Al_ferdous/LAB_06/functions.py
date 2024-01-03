@@ -3,6 +3,7 @@
 from nltk.parse.dependencygraph import DependencyGraph
 from nltk.parse import DependencyEvaluator
 
+#function to parse and evaluate sentences
 def parse_and_evaluate_sents(dependency_treebank, nlp):
     docs = []
     dps = []

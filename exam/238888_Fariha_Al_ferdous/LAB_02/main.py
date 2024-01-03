@@ -16,9 +16,9 @@ if __name__ == "__main__":
     # Print the results
     categories = ['alt.atheism', 'talk.religion.misc', 'comp.graphics', 'sci.space', 'misc.forsale']
     stratified_split = StratifiedKFold(n_splits=5, shuffle=True)
-    clf = svm.SVC(kernel="linear",C=2)
+    clf = svm.SVC(kernel="linear",C=2) #taking hyperparameter C=2 to converge
 
-
+    #original count vectorizer
     print("\033[1mLinear SVM Evaluation (CountVect)\033[0m")
     vectorizer = CountVectorizer()
     data = extract_features(vectorizer, categories)
@@ -26,36 +26,37 @@ if __name__ == "__main__":
 
     print("\033[1mLinear SVM Evaluation (CountVect-binary)\033[0m")
 
-    vectorizer = CountVectorizer(binary=False)
+    #taking binary of countvect
+    vectorizer = CountVectorizer(binary=True)
     data = extract_features(vectorizer, categories)
     SVM_evaluation(clf, data, stratified_split)
 
     print("\033[1mLinear SVM Evaluation (TFIDF)\033[0m")
-
+    #original tfidf
     vectorizer = TfidfVectorizer()
     data = extract_features(vectorizer, categories)
     SVM_evaluation(clf, data, stratified_split)
 
     print("\033[1mLinear SVM Evaluation (TFIDF-minCutOff)\033[0m")
-
+    #taking min cutoff for tfidf
     vectorizer = TfidfVectorizer(min_df=2)
     data = extract_features(vectorizer, categories)
     SVM_evaluation(clf, data, stratified_split)
 
     print("\033[1mLinear SVM Evaluation (TFIDF-maxCutOff)\033[0m")
-
+    #taking max cutoff for tfidf
     vectorizer = TfidfVectorizer(max_df=5)
     data = extract_features(vectorizer, categories)
     SVM_evaluation(clf, data, stratified_split)
 
     print("\033[1mLinear SVM Evaluation (TFIDF-WithoutStopWords)\033[0m")
-
+    #taking stopwords to None for tfidf
     vectorizer = TfidfVectorizer(stop_words=None)
     data = extract_features(vectorizer, categories)
     SVM_evaluation(clf, data, stratified_split)
 
     print("\033[1mLinear SVM Evaluation (TFIDF-NoLowerCase)\033[0m")
-
+    #using tfidf without lowercase
     vectorizer = TfidfVectorizer(lowercase=False)
     data = extract_features(vectorizer, categories)
     SVM_evaluation(clf, data, stratified_split)

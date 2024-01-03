@@ -192,7 +192,7 @@ def original_lesk(context_sentence, ambiguous_word, pos=None, synsets=None, majo
         _, best_sense = max(scores)
     return best_sense
 
-
+#function to extend colloctional features
 def extend_collocational_features(inst):
     p = inst.position
     return {

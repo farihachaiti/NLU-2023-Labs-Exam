@@ -1,6 +1,7 @@
 # Add the class of your model only
 # Here is where you define the architecture of your model using pytorch
 
+#function to print pcfg rules for the chosen two sentences
 def PCFG_rule():
         #PCFG
     wght_rules = [
@@ -36,12 +37,13 @@ def PCFG_rule():
 
     return wght_rules
 
-
+#function to parse sentences
 def parse_sentences(sentences, parser):
     for sent in sentences:
         for tree in parser.parse(sent.split()):
             print(tree)
 
+#function to print sentences
 def print_sentences(func, grammer=None, start=None, n=10):
     if grammer:
         for sent in func(grammer, start=start, n=n):

@@ -22,8 +22,7 @@ if __name__ == "__main__":
     #Wrtite the code to load the datasets and to run your functions
     # Print the results
     
-# Experiment also with a smaller or bigger model by changing hid and emb sizes 
-# A large model tends to overfit
+    #train and test models with variations
 
 
     print("\033[1mPPL using LSTM instead of RNN with SGD:\033[0m")
@@ -42,10 +41,7 @@ if __name__ == "__main__":
     model = LM_LSTM(emb_size, hid_size, vocab_len, pad_index=lang.word2id["<pad>"]).to(device)
     model.apply(init_weights)
     # Specify the path to save the bin file
-    bin_file_path = "model.bin"
 
-    # Save the model to the bin file
-    torch.save(model.state_dict(), bin_file_path)
     optimizer = optim.SGD(model.parameters(), lr=lr)
     criterion_train = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"])
     criterion_eval = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"], reduction='sum')
@@ -76,8 +72,13 @@ if __name__ == "__main__":
                 
             if patience <= 0: # Early stopping with patience
                 break # Not nice but it keeps the code clean
-                            
+    #saving model                
     best_model.to(device)
+    bin_file_path = "bin/model.bin"
+
+    # Save the model to the bin file
+    torch.save(model.state_dict(), bin_file_path)
+    #results
     final_ppl,  _ = eval_loop(test_loader, criterion_eval, best_model)    
     print('Test ppl: ', final_ppl)
 
@@ -99,11 +100,7 @@ if __name__ == "__main__":
 
     model = LM_LSTM_with_dropout(emb_size, hid_size, vocab_len, pad_index=lang.word2id["<pad>"]).to(device)
     model.apply(init_weights)
-    # Specify the path to save the bin file
-    bin_file_path = "model_with_dropout.bin"
 
-    # Save the model to the bin file
-    torch.save(model.state_dict(), bin_file_path)
     optimizer = optim.SGD(model.parameters(), lr=lr)
     criterion_train = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"])
     criterion_eval = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"], reduction='sum')
@@ -137,13 +134,19 @@ if __name__ == "__main__":
                 break # Not nice but it keeps the code clean
                             
     best_model.to(device)
+    # Specify the path to save the bin file
+    bin_file_path = "bin/model_with_dropout.bin"
+
+    # Save the model to the bin file
+    torch.save(model.state_dict(), bin_file_path)
+    #results
     final_ppl,  _ = eval_loop(test_loader, criterion_eval, best_model)    
 
     print('Test ppl: ', final_ppl)
 
     print("\033[1mPPL using LSTM with two dropout layers and AdamW:\033[0m")
 
-    optimizer = optim.AdamW(model.parameters(), lr=lr)
+    optimizer = optim.AdamW(model.parameters(), lr=lr) #replaced SGD with AdamW
     criterion_train = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"])
     criterion_eval = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"], reduction='sum')
 
@@ -175,6 +178,12 @@ if __name__ == "__main__":
                 break # Not nice but it keeps the code clean
                             
     best_model.to(device)
+    # Specify the path to save the bin file
+    bin_file_path = "bin/model_with_dropout.bin"
+
+    # Save the model to the bin file
+    torch.save(model.state_dict(), bin_file_path)
+    #results
     final_ppl,  _ = eval_loop(test_loader, criterion_eval, best_model)    
 
     print('Test ppl: ', final_ppl)

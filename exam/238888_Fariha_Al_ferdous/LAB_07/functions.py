@@ -53,6 +53,7 @@ def word2features(sent, i):
                 
     return features
 
+#tutorial sent2features
 def sent2features(sent):
     return [word2features(sent, i) for i in range(len(sent))]
 
@@ -62,7 +63,8 @@ def sent2labels(sent):
 def sent2tokens(sent):
     return [token for token, postag, label in sent]
 
-  # to use white space tokenization (generally a bad idea for unknown data)
+  
+#baseline sent2spacy_features
 def sent2spacy_features(sent):
     spacy_sent = nlp(" ".join(sent2tokens(sent)))
     feats = []
@@ -83,6 +85,7 @@ def sent2features_for_extended_window(sent):
 def sent2features_for_doubled_window(sent):
     return [double_window_word2features(sent, i) for i in range(len(sent))]
 
+#adding suffix
 def sent2spacy_features_with_suffix(sent):
     spacy_sent = nlp(" ".join(sent2tokens(sent)))
     feats = []
@@ -98,6 +101,7 @@ def sent2spacy_features_with_suffix(sent):
     
     return feats
 
+#increasing window [-1, +1]
 def extend_window_for_word2features(sent, i):
     word = sent[i][0]
     postag = sent[i][1]
@@ -141,6 +145,7 @@ def extend_window_for_word2features(sent, i):
                 
     return features
 
+#increasing window [-2, +2]
 def double_window_word2features(sent, i):
     word = sent[i][0]
     postag = sent[i][1]
@@ -185,7 +190,7 @@ def double_window_word2features(sent, i):
     return features
 
 
-
+#train and test CRF model
 def train_and_test_crf_model(trn_label, trn_feats, tst_sents, tst_feats):
     crf = CRF(
         algorithm='lbfgs', 

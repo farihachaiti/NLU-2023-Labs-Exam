@@ -6,6 +6,7 @@ import numpy as np
 from numpy.linalg import norm
 from scipy.spatial.distance import cosine
 
+#mandatory functions for model training and testing
 def cosine_similarity(v, w):
     return np.dot(v,w)/(norm(v)*norm(w))
 

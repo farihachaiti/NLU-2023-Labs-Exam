@@ -5,6 +5,7 @@ from conll import evaluate
 from sklearn.metrics import classification_report
 from utils import *
 
+#mandatory functions
 criterion_slots = torch.nn.CrossEntropyLoss(ignore_index=PAD_TOKEN)
 criterion_intents = torch.nn.CrossEntropyLoss() # Because we do not have the pad token
 

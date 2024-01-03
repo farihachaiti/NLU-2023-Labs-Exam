@@ -7,7 +7,6 @@ import os
 import sys
 import tensorflow as tf
 sys.path.insert(0, os.path.abspath('../src/'))
-#from conll import evaluate
 from sklearn.metrics import classification_report
 from transformers import Trainer, TrainingArguments
 from transformers import default_data_collator, TFBertModel
@@ -37,7 +36,7 @@ class ModelIAS(tf.keras.Model):
         self.slot_out = Dense(self.total_slot_no, activation='softmax')
         self.intent_out = Dense(self.total_intent_no, activation='softmax')
         # Dropout layer How do we apply it?
-        self.dropout = Dropout(self.dropout_prob)
+        self.dropout = Dropout(self.dropout_prob) #to prevent overfitting
 
 
 

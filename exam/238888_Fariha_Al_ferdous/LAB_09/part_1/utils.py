@@ -5,7 +5,7 @@ from functools import partial
 from torch.utils.data import DataLoader
 device = 'cuda:0'
 
-
+#preprocessing datasets
 def read_file(path, eos_token="<eos>"):
     output = []
     with open(path, "r") as f:

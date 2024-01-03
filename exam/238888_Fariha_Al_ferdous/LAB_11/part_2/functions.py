@@ -3,6 +3,7 @@ import numpy
 import os
 import re
 
+#mandatory functions
 SMALL_POSITIVE_CONST = 1e-4
 
 
@@ -40,9 +41,7 @@ def evaluate_ote(gold_ot, pred_ot):
     n_samples = len(gold_ot)
     # number of true positive, gold standard, predicted opinion targets
     n_tp_ot, n_gold_ot, n_pred_ot = 0, 0, 0
-    #for i in range(n_samples):
-        #g_ot = gold_ot[i]
-        #p_ot = pred_ot[i]
+
     g_ot_sequence, p_ot_sequence = tag2ot(ote_tag_sequence=gold_ot), tag2ot(ote_tag_sequence=pred_ot)
     # hit number
     n_hit_ot = match_ot(gold_ote_sequence=g_ot_sequence, pred_ote_sequence=p_ot_sequence)
@@ -107,9 +106,7 @@ def evaluate_ts(gold_ts, pred_ts):
     n_tp_ts, n_gold_ts, n_pred_ts = numpy.zeros(3), numpy.zeros(3), numpy.zeros(3)
     ts_precision, ts_recall, ts_f1 = numpy.zeros(3), numpy.zeros(3), numpy.zeros(3)
 
-    #for i in range(n_samples):
-        #g_ts = gold_ts[i]
-        #p_ts = pred_ts[i]
+
     g_ts_sequence, p_ts_sequence = tag2ts(ts_tag_sequence=gold_ts), tag2ts(ts_tag_sequence=pred_ts)
     hit_ts_count, gold_ts_count, pred_ts_count = match_ts(gold_ts_sequence=g_ts_sequence,
                                                           pred_ts_sequence=p_ts_sequence)

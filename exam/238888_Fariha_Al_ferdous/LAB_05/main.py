@@ -13,7 +13,8 @@ from pcfg import PCFG
 if __name__ == "__main__":
     #Wrtite the code to load the datasets and to run your functions
     # Print the results
-        #2 sentences
+
+    #2 sentences
     sentences = ["Margaret ate rice with a fish but I do not like fish", "She loves photography and also dance"]
 
 
@@ -27,6 +28,7 @@ if __name__ == "__main__":
     for rule in wght_rules:
         print(rule)
 
+    #grammer and parser
     grammer = nltk.PCFG.fromstring(wght_rules)
     parser = nltk.ViterbiParser(grammer)
 

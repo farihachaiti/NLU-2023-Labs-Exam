@@ -9,7 +9,7 @@ from itertools import chain
 import math
 import numpy as np
 
-
+#custom stupid backoff algorithm
 class MyStupidBackoff(LanguageModel):
     
     def __init__(self, context, fdist, order, alpha=0.4, *args, **kwargs):
@@ -25,6 +25,7 @@ class MyStupidBackoff(LanguageModel):
         ngram_words = list(ngrams(token, order))
         return ngram_words
 
+    #manual perplexity calculating function
     def compute_ppl(self, model, data):
         highest_ngram = model.order
         scores = []

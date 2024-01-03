@@ -37,7 +37,7 @@ if __name__ == "__main__":
         print("\033[1mTAG:\033[0m {}".format(ngramTagger.tag(s)))
         break
 
-    # evaluation
+    # evaluation of the first test
     accuracy = ngramTagger.accuracy(tst_data)
 
     print("\033[1mAccuracy of NgramTagger:\033[0m {:6.4f}".format(accuracy))
@@ -66,7 +66,7 @@ if __name__ == "__main__":
     print("\033[1mTAG:\033[0m {}".format(test))
 
 
-
+    #evaluation of the second test
     accuracy = nlp_accuracy(reference, test)
     print("\033[1mAccuracy of Spacy:\033[0m {:6.4f}".format(accuracy))
 

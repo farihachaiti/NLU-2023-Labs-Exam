@@ -15,6 +15,7 @@ import torch
 import torch.utils.data as data
 import tensorflow as tf
 
+#preprocessing datasets
 def load_data(path):
     '''
         input: path/to/data
