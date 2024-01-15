@@ -47,3 +47,6 @@ class MyStupidBackoff(LanguageModel):
 
     def unmasked_score(self, word, context=None):
         return self.stupid_backoff(word, context)
+
+    def cross_entropy(self, ngrams):
+        return self.entropy([x for x in ngrams if (x and (len(x) == self.order))])

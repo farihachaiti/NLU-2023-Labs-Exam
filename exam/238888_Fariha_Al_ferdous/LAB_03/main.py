@@ -16,24 +16,46 @@ if __name__ == "__main__":
     
     #preprocessing
     macbeth_sents = [[w.lower() for w in sent] for sent in gutenberg.sents('shakespeare-macbeth.txt')]
-    macbeth_words = flatten(macbeth_sents)
+    macbeth_flattened = str(flatten(macbeth_sents))
+    macbeth_words = word_tokenize(macbeth_flattened)
+    
     # Compute vocab 
     lex = Vocabulary(macbeth_words, unk_cutoff=2)
-    # Handeling OOV
+    # Handling OOV
     macbeth_oov_sents = [list(lex.lookup(sent)) for sent in macbeth_sents]
-    padded_ngrams_oov, flat_text_oov = padded_everygram_pipeline(2, macbeth_oov_sents)
-    # Train the model 
-    fdist = FreqDist(chain.from_iterable(macbeth_oov_sents))
-
+    
+   
     #Custom StupidBackoff algorithm with alpha=0.4
-    stupid = MyStupidBackoff(macbeth_oov_sents, fdist, 2, 0.4)
-    stupid.fit(padded_ngrams_oov, flat_text_oov)
+    order = 2
+    fdist = FreqDist(chain.from_iterable(macbeth_oov_sents))
+    token = word_tokenize(str(macbeth_oov_sents))
+    ngram_words = list(ngrams(token, order))
+   
+    if not ngram_words or order==1:
+        print('Please choose a higher order')
+    else:        
+        stupid = MyStupidBackoff(macbeth_oov_sents, fdist, order, 0.4)
+        # Train the model 
+        padded_ngrms_oov, flat_text_oov = padded_everygram_pipeline(stupid.order, macbeth_oov_sents)
 
-    ngrms, flat_text = padded_everygram_pipeline(stupid.order, macbeth_sents)
-    ngrms = chain.from_iterable(ngrms)
+        stupid.fit(padded_ngrms_oov, flat_text_oov)
 
-    print("\033[1mMyStupidBackoff StupidBackoff : Perplexity\033[0m")
-    print("{:.3}".format(stupid.perplexity([x for x in ngrms if len(x) == stupid.order])))
+        ngrams, flat_text = padded_everygram_pipeline(stupid.order, [lex.lookup(sent)for sent in macbeth_sents])
+        ngrams = chain.from_iterable(ngrams)
 
-    print("\033[1mMyStupidBackoff StupidBackoff : Manual Function Perplexity\033[0m")
-    print("{:.3}".format(stupid.compute_ppl(stupid, macbeth_sents)))
+        print("\033[1mMyStupidBackoff StupidBackoff : Perplexity\033[0m")
+        print(stupid.perplexity([x for x in ngrams if len(x) == stupid.order]))
+
+        print("\033[1mMyStupidBackoff StupidBackoff : Manual Function Perplexity\033[0m")
+        print(stupid.compute_ppl(stupid, macbeth_sents))
+    
+        ngrams, flat_text = padded_everygram_pipeline(stupid.order, [lex.lookup(sent) for sent in macbeth_sents])
+        ngrams = chain.from_iterable(ngrams)
+        cross_entropy = stupid.cross_entropy(ngrams)
+        print('\033[1mCross Entropy\033[0m:')
+        print(cross_entropy)
+
+
+
+
+    
