@@ -10,6 +10,7 @@ import spacy
 import math
 import en_core_web_sm
 from spacy.tokenizer import Tokenizer
+from itertools import chain
 
 
 if __name__ == "__main__":
@@ -27,14 +28,14 @@ if __name__ == "__main__":
 
     print("\033[1mTagging with NgramTagger\033[0m") 
     
-    #Using DefaultTagger with cutoff 1
+    #Using DefaultTagger with cutoff 1 as backoff
     backoff = DefaultTagger('NN')
     ngramTagger = nltk.NgramTagger(1,train=trn_data,cutoff=1,backoff=backoff)
 
     # tagging sentences in test set
     for s in treebank.sents()[train_indx:]:
-        print("\033[1mINPUT:\033[0m {}".format(s))
-        print("\033[1mTAG:\033[0m {}".format(ngramTagger.tag(s)))
+        print("\033[1mINPUT:\033[0m {}".format(list(s)))
+        print("\033[1mTAG:\033[0m {}".format(ngramTagger.tag(list(s))))
         break
 
     # evaluation of the first test
@@ -62,8 +63,8 @@ if __name__ == "__main__":
         reference = ngramTagger.tag(s)
         break
         
-    print("\033[1mREFERENCE:\033[0m {}".format(reference))
-    print("\033[1mTAG:\033[0m {}".format(test))
+    print("\033[1mREFERENCE:\033[0m {}".format(list(reference)))
+    print("\033[1mTAG:\033[0m {}".format(list(test)))
 
 
     #evaluation of the second test
