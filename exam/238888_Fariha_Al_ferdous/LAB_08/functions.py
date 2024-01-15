@@ -192,20 +192,24 @@ def original_lesk(context_sentence, ambiguous_word, pos=None, synsets=None, majo
         _, best_sense = max(scores)
     return best_sense
 
+
 #function to extend colloctional features
 def extend_collocational_features(inst):
     p = inst.position
+
     return {
         "w-2_word": 'NULL' if p < 2 else inst.context[p-2][0],
         "w-1_word": 'NULL' if p < 1 else inst.context[p-1][0],
         "w+1_word": 'NULL' if len(inst.context) - 1 < p+1 else inst.context[p+1][0],
         "w+2_word": 'NULL' if len(inst.context) - 1 < p+2 else inst.context[p+2][0],
-        "pos-tag for w-2_word": 'NULL' if p < 2 else nltk.pos_tag(inst.context[p-2], tagset="universal")[1][1],
-        "pos-tag for w-1_word": 'NULL' if p < 1 else nltk.pos_tag(inst.context[p-1], tagset="universal")[1][1],
-        "pos-tag for w+1_word": 'NULL' if len(inst.context) - 1 < p+1 else nltk.pos_tag(inst.context[p+1], tagset="universal")[1][1],
-        "pos-tag for w+2_word": 'NULL' if len(inst.context) - 1 < p+2 else nltk.pos_tag(inst.context[p+2], tagset="universal")[1][1],
+        "pos-tag for w-2_word": 'NULL' if p < 2 else nltk.pos_tag(inst.context[p-2], tagset="universal")[0],
+        "pos-tag for w-1_word": 'NULL' if p < 1 else nltk.pos_tag(inst.context[p-1], tagset="universal")[0],
+        "pos-tag for w+1_word": 'NULL' if len(inst.context) - 1 < p+1 else nltk.pos_tag(inst.context[p+1], tagset="universal")[0],
+        "pos-tag for w+2_word": 'NULL' if len(inst.context) - 1 < p+2 else nltk.pos_tag(inst.context[p+2], tagset="universal")[0],
+        "ngrams within w-3": 'NULL' if p < 3 else list(ngrams(inst.context[p-3], 2))[0],
         "ngrams within w-2": 'NULL' if p < 2 else list(ngrams(inst.context[p-2], 2))[0],
         "ngrams within w-1": 'NULL' if p < 1 else list(ngrams(inst.context[p-1], 2))[0],
         "ngrams within w+1": 'NULL' if len(inst.context) - 1 < p+1 else list(ngrams(inst.context[p+1], 2))[0],
-        "ngrams within w+2": 'NULL' if len(inst.context) - 1 < p+2 else list(ngrams(inst.context[p+2], 2))[0]
+        "ngrams within w+2": 'NULL' if len(inst.context) - 1 < p+2 else list(ngrams(inst.context[p+2], 2))[0],
+        "ngrams within w+3": 'NULL' if len(inst.context) - 1 < p+3 else list(ngrams(inst.context[p+3], 2))[0],
     }

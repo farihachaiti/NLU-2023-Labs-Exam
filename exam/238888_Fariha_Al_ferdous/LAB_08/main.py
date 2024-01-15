@@ -50,6 +50,7 @@ if __name__ == "__main__":
             tags = preprocess(defn)
             toks = [l for w, l, p in tags]
             synsets.append((ss,toks))
+   
 
     vectorizer = CountVectorizer()
     classifier = MultinomialNB()
@@ -61,7 +62,7 @@ if __name__ == "__main__":
     vectors = vectorizer.fit_transform(data)
     lblencoder.fit(lbls)
     labels = lblencoder.transform(lbls)
-
+    
     #extending collocational features
     data_col = [extend_collocational_features(inst) for inst in senseval.instances('interest.pos')]
     #results
