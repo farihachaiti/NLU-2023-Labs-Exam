@@ -117,8 +117,9 @@ def extend_window_for_word2features(sent, i):
         'postag': postag,
         'postag[:2]': postag[:2],        
     }
-    if i > -1:
-        word1 = sent[i-1][0]
+    #if i >= -1:
+    if i>0:
+        word1 = sent[i-1][-1]
         postag1 = sent[i-1][1]
         features.update({
             '-1:word.lower()': word1.lower(),
@@ -130,9 +131,10 @@ def extend_window_for_word2features(sent, i):
     else:
         features['BOS'] = True
         
-    if i < len(sent):
-        word1 = sent[i][0]
-        postag1 = sent[i][1]
+    #if i <= len(sent):
+    if i < len(sent)-1:
+        word1 = sent[i+1][1]
+        postag1 = sent[i+1][1]
         features.update({
             '+1:word.lower()': word1.lower(),
             '+1:word.istitle()': word1.istitle(),
@@ -161,28 +163,30 @@ def double_window_word2features(sent, i):
         'postag': postag,
         'postag[:2]': postag[:2],        
     }
-    if i > -2:
-        word1 = sent[i-1][0]
+    #if i >= -2:
+    if i >0:
+        word1 = sent[i-1][-2]
         postag1 = sent[i-1][1]
         features.update({
-            '-1:word.lower()': word1.lower(),
-            '-1:word.istitle()': word1.istitle(),
-            '-1:word.isupper()': word1.isupper(),
-            '-1:postag': postag1,
-            '-1:postag[:2]': postag1[:2],
+            '-2:word.lower()': word1.lower(),
+            '-2:word.istitle()': word1.istitle(),
+            '-2:word.isupper()': word1.isupper(),
+            '-2:postag': postag1,
+            '-2:postag[:2]': postag1[:2],
         })
     else:
         features['BOS'] = True
         
-    if i < len(sent) +1:
-        word1 = sent[i][0]
-        postag1 = sent[i][1]
+    #if i <= len(sent) +1:
+    if i <len(sent)-1:
+        word1 = sent[i+1][2]
+        postag1 = sent[i+1][1]
         features.update({
-            '+1:word.lower()': word1.lower(),
-            '+1:word.istitle()': word1.istitle(),
-            '+1:word.isupper()': word1.isupper(),
-            '+1:postag': postag1,
-            '+1:postag[:2]': postag1[:2],
+            '+2:word.lower()': word1.lower(),
+            '+2:word.istitle()': word1.istitle(),
+            '+2:word.isupper()': word1.isupper(),
+            '+2:postag': postag1,
+            '+2:postag[:2]': postag1[:2],
         })
     else:
         features['EOS'] = True

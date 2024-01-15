@@ -13,7 +13,7 @@ if __name__ == "__main__":
     # Print the results
 
     print("\033[1mconll2002 Corpus\033[0m")
-    print(conll2002.iob_sents('esp.train')[0])
+
 
     #performing variable features and train and testing CRF model on these
     print("\033[1mBaseline using the features in sent2spacy_features:\033[0m")
