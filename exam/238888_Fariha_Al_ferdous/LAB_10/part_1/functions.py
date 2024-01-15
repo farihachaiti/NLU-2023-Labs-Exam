@@ -32,7 +32,7 @@ def init_weights(mat):
 
 
 
-def train_loop(data, optimizer, criterion_slots, critenrion_intents, model):
+def train_loop(data, optimizer, criterion_slots, criterion_intents, model):
     model.train()
     loss_array = []
     for sample in data:

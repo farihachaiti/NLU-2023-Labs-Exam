@@ -1,5 +1,7 @@
 # Add the class of your model only
 # Here is where you define the architecture of your model using pytorch
+from collections import Counter
+import nltk
 
 #function to print statistics
 def statistics(chars, words, sents):
@@ -32,22 +34,23 @@ def cut_off(vocab, n_min=100, n_max=100):
 def nbest(d, n=1):
     return dict(sorted(d.items(), key=lambda item: item[1], reverse=True)[:n])
 
-def print_lowercased_lexicons(lex):
+def print_lowercased_lexicons(corp):
+    lex = set([w.lower() for w in corp])
     print(len(lex))
-    print('ALL' in lex)
-    print('All' in lex)
-    print('all' in lex)
+
 
 #function to get frequency distribution
-def frequency_distribution(corp, lower_bound, upper_bound):
-    lexicon_cut_off = len(cut_off(corp, n_min=lower_bound, n_max=upper_bound))
+def frequency_distribution_ref(corp):
+    ref_freq_list = Counter(corp)
+    best_words = nbest(ref_freq_list,n=5)
+    print(best_words)
 
-    print(corp.get('ALL', 0))
-    print(corp.get('All', 0))
-    print(corp.get('all', 0))
+def frequency_distribution_nltk(corp):
+    nltk_freq_list = nltk.FreqDist(corp)
+    best_words = nbest(nltk_freq_list,n=5)
+    print(best_words)
 
-    print('Original', len(corp))
-    print('CutOFF Min:', lower_bound, 'MAX:', upper_bound, ' Lexicon Size:', lexicon_cut_off)
-
-    best_words = nbest(corp,n=5)
+def frequency_distribution_spacy(corp):
+    spacy_freq_list = Counter(corp)
+    best_words = nbest(spacy_freq_list,n=5)
     print(best_words)
