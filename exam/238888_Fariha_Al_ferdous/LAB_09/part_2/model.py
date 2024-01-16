@@ -19,11 +19,11 @@ class VariationalDropout(nn.Module):
         return torch.exp(self.log_alpha)
 
     def forward(self, x):
-        if self.train():
-            normal_noise = torch.randn_like(x)
-            self.log_alpha.data = torch.clamp(self.log_alpha.data, max=self.max_log_alpha)
-            random_tensor = 1. + normal_noise * torch.sqrt(self.alpha)
-            x *= random_tensor
+        #if self.train():
+        normal_noise = torch.randn_like(x)
+        self.log_alpha.data = torch.clamp(self.log_alpha.data, max=self.max_log_alpha)
+        random_tensor = 1. + normal_noise * torch.sqrt(self.alpha)
+        x *= random_tensor
         return x
     
 class LM_LSTM(nn.Module):
@@ -39,17 +39,19 @@ class LM_LSTM(nn.Module):
         self.output = nn.Linear(hidden_size, output_size)
         self.v_dropout = VariationalDropout() #applying the configured variational dropout
         #tying weights if hidden size and embedded size are not equal
-        if tie_weights:
-            if hidden_size != emb_size:
-                raise ValueError('When using the tied flag, nhid must be equal to emsize')
-            self.embedding.weight = self.output.weight
+        if self.train():
+            if tie_weights:
+                if hidden_size != emb_size:
+                    raise ValueError('When using the tied flag, nhid must be equal to emsize')
+                self.embedding.weight = self.output.weight
         
     def forward(self, input_sequence):
         emb = self.embedding(input_sequence)
         lstm_out, _  = self.lstm(emb)
         output = self.output(lstm_out).permute(0,2,1)
-        final_output = self.v_dropout(output)
-        return final_output
+        if self.train():
+            output = self.v_dropout(output)
+        return output
     def get_word_embedding(self, token):
         return self.embedding(token).squeeze(0).detach().cpu().numpy()
     

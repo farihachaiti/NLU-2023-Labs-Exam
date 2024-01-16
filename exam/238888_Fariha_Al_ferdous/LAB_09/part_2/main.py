@@ -75,7 +75,7 @@ if __name__ == "__main__":
     bin_file_path = "bin/model.bin"
 
     # Save the model to the bin file
-    torch.save(model.state_dict(), bin_file_path)
+    torch.save(best_model.state_dict(), bin_file_path)
     #results
     final_ppl,  _ = eval_loop(test_loader, criterion_eval, best_model)   
     print("\033[1mPPL using LSTM with variational dropout, tied weights and non-monotonic ASGD:\033[0m")

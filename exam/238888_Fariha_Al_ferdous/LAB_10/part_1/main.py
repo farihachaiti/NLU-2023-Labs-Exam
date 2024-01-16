@@ -56,13 +56,15 @@ if __name__ == "__main__":
                 patience -= 1
             if patience <= 0: # Early stopping with patience
                 break # Not nice but it keeps the code clean
-
-    results_test, intent_test, _ = eval_loop(test_loader, criterion_slots,
-                                            criterion_intents, model, lang)
+    
     bin_file_path = "model.bin"
 
     # Save the model to the bin file
     torch.save(model.state_dict(), bin_file_path)
+
+    results_test, intent_test, _ = eval_loop(test_loader, criterion_slots,
+                                            criterion_intents, model, lang)
+
 
     #results
     print("\033[1mResults of Modified model MODELIAS:\033[0m")

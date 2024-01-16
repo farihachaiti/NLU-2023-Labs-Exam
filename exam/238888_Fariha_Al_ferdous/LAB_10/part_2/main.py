@@ -40,10 +40,11 @@ if __name__ == "__main__":
         validation_data=([dev_input_ids,dev_attention_masks], (dev_slots, dev_labels)),
         epochs=15, batch_size=128)
 
-
-    result = model.evaluate([test_input_ids,test_attention_masks], (test_slots, test_labels))
     # Save the model to the bin file
     model.save("bin/saved_model")
+
+    result = model.evaluate([test_input_ids,test_attention_masks], (test_slots, test_labels))
+
 
     #results
     print("\033[1mResults of BERT MODEL:\033[0m")

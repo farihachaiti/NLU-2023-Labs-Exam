@@ -49,7 +49,7 @@ def eval_loop(data, eval_criterion, model):
 
 def init_weights(mat):
     for m in mat.modules():
-        if type(m) in [torch.nn.GRU, torch.nn.LSTM, torch.nn.RNN]:
+        if type(m) in [torch.nn.LSTM, torch.nn.Embedding]:
             for name, param in m.named_parameters():
                 if 'weight_ih' in name:
                     for idx in range(4):

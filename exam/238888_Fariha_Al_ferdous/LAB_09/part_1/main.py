@@ -182,7 +182,7 @@ if __name__ == "__main__":
     bin_file_path = "bin/model_with_dropout.bin"
 
     # Save the model to the bin file
-    torch.save(model.state_dict(), bin_file_path)
+    torch.save(best_model.state_dict(), bin_file_path)
     #results
     final_ppl,  _ = eval_loop(test_loader, criterion_eval, best_model)    
 

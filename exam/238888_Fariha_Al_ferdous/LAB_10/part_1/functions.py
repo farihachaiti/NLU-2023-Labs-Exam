@@ -11,7 +11,7 @@ criterion_intents = torch.nn.CrossEntropyLoss() # Because we do not have the pad
 
 def init_weights(mat):
     for m in mat.modules():
-        if type(m) in [torch.nn.GRU, torch.nn.LSTM, torch.nn.RNN]:
+        if type(m) in [torch.nn.Embedding, torch.nn.LSTM]:
             for name, param in m.named_parameters():
                 if 'weight_ih' in name:
                     for idx in range(4):
