@@ -254,7 +254,7 @@ dev_loader = DataLoader(dev_dataset, batch_size=64, collate_fn=collate_fn)
 test_loader = DataLoader(test_dataset, batch_size=64, collate_fn=collate_fn)
 
 
-
+#preparation of dataset for processing by the model
 def prepare_dataset(data, model):
     input_ids_all = []
     attention_masks_all = []
