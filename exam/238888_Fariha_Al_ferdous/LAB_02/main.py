@@ -19,44 +19,38 @@ if __name__ == "__main__":
     clf = svm.SVC(kernel="linear",C=2) #taking hyperparameter C=2 to converge
 
     #original count vectorizer
-    print("\033[1mLinear SVM Evaluation (CountVect)\033[0m")
+    print("\033[1mLinear SVM Evaluation\033[0m")
     vectorizer = CountVectorizer()
     data = extract_features(vectorizer, categories)
-    SVM_evaluation(clf, data, stratified_split)
+    SVM_evaluation(clf, data, stratified_split, 'LinearSVC')
 
-    print("\033[1mLinear SVM Evaluation (CountVect-binary)\033[0m")
-
+    print("\033[1mLinear SVM Evaluation (CountVect)\033[0m")
     #taking binary of countvect
     vectorizer = CountVectorizer(binary=True)
     data = extract_features(vectorizer, categories)
-    SVM_evaluation(clf, data, stratified_split)
+    SVM_evaluation(clf, data, stratified_split, 'CountVect')
 
     print("\033[1mLinear SVM Evaluation (TFIDF)\033[0m")
     #original tfidf
     vectorizer = TfidfVectorizer()
     data = extract_features(vectorizer, categories)
-    SVM_evaluation(clf, data, stratified_split)
+    SVM_evaluation(clf, data, stratified_split, 'TFIDF')
 
-    print("\033[1mLinear SVM Evaluation (TFIDF-minCutOff)\033[0m")
+    print("\033[1mLinear SVM Evaluation (CutOff)\033[0m")
     #taking min cutoff for tfidf
-    vectorizer = TfidfVectorizer(min_df=2)
+    vectorizer = TfidfVectorizer(min_df=2, max_df=5)
     data = extract_features(vectorizer, categories)
-    SVM_evaluation(clf, data, stratified_split)
+    SVM_evaluation(clf, data, stratified_split,'CutOff')
 
-    print("\033[1mLinear SVM Evaluation (TFIDF-maxCutOff)\033[0m")
-    #taking max cutoff for tfidf
-    vectorizer = TfidfVectorizer(max_df=5)
-    data = extract_features(vectorizer, categories)
-    SVM_evaluation(clf, data, stratified_split)
 
-    print("\033[1mLinear SVM Evaluation (TFIDF-WithoutStopWords)\033[0m")
+    print("\033[1mLinear SVM Evaluation (WithoutStopWords)\033[0m")
     #taking stopwords to None for tfidf
     vectorizer = TfidfVectorizer(stop_words=None)
     data = extract_features(vectorizer, categories)
-    SVM_evaluation(clf, data, stratified_split)
+    SVM_evaluation(clf, data, stratified_split, 'WithoutStopWords')
 
-    print("\033[1mLinear SVM Evaluation (TFIDF-NoLowerCase)\033[0m")
+    print("\033[1mLinear SVM Evaluation (NoLowerCase)\033[0m")
     #using tfidf without lowercase
     vectorizer = TfidfVectorizer(lowercase=False)
     data = extract_features(vectorizer, categories)
-    SVM_evaluation(clf, data, stratified_split)
+    SVM_evaluation(clf, data, stratified_split, 'NoLowerCase')

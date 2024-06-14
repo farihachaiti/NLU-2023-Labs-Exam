@@ -44,10 +44,10 @@ def parse_sentences(sentences, parser):
             print(tree)
 
 #function to print sentences
-def print_sentences(func, grammer=None, start=None, n=10):
-    if grammer:
-        for sent in func(grammer, start=start, n=n):
+def print_sentences(func, grammer=None, start=None, n=10, d=10):
+    if start:
+        for sent in func(grammer, start=start, depth=d, n=n):
             print(sent)
     else:
-        for sent in func(n):
-            print(sent)
+        for sent in func(grammer, n=n):
+            print([sent])

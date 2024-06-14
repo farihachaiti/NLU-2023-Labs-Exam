@@ -7,7 +7,7 @@ from sklearn.datasets import fetch_20newsgroups
 import numpy as np
 
 #function to evaluate the classifier
-def SVM_evaluation(clf, data, split):
+def SVM_evaluation(clf, data, split, experiment_id=None):
     hyps_list = []
     refs_list = []
     scores_list= []
@@ -26,8 +26,8 @@ def SVM_evaluation(clf, data, split):
     hyps_list2 = [item for sublist in hyps_list for item in sublist]
     scores = cross_validate(clf, data.data, data.target, cv=split, scoring=['f1_weighted']) 
 
-    print(classification_report(refs_list2, hyps_list2, target_names=data.target_names))
-    print(sum(scores['test_f1_weighted'])/len(scores['test_f1_weighted']))
+    print(experiment_id, sum(scores['test_f1_weighted'])/len(scores['test_f1_weighted']))
+
 
 #function to extract features
 def extract_features(vectorizer, categories):

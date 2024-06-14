@@ -17,11 +17,12 @@ if __name__ == "__main__":
 
     # Prepare Training & Test Splits as 90%/10%
     nltk.download('treebank')
+    nltk.download('universal_tagset')
 
     total_size = len(treebank.tagged_sents())
     train_indx = math.ceil(total_size * 0.9)
     trn_data = treebank.tagged_sents(tagset='universal')[:train_indx]
-    tst_data = treebank.tagged_sents(tagset='universal')[train_indx:]
+    tst_data = treebank.tagged_sents(tagset='universal')[:train_indx:]
 
     print("\033[1mTotal:\033[0m {}; \033[1mTrain:\033[0m {}; \033[1mTest:\033[0m {}".format(total_size, len(trn_data), len(tst_data)))
 
@@ -33,15 +34,16 @@ if __name__ == "__main__":
     ngramTagger = nltk.NgramTagger(1,train=trn_data,cutoff=1,backoff=backoff)
 
     # tagging sentences in test set
-    for s in treebank.sents()[train_indx:]:
-        print("\033[1mINPUT:\033[0m {}".format(list(s)))
-        print("\033[1mTAG:\033[0m {}".format(ngramTagger.tag(list(s))))
+    for s in treebank.sents()[:train_indx:]:
+        print("INPUT: {}".format(s))
+        print("TAG  : {}".format(ngramTagger.tag(s)))
         break
 
     # evaluation of the first test
     accuracy = ngramTagger.accuracy(tst_data)
 
-    print("\033[1mAccuracy of NgramTagger:\033[0m {:6.4f}".format(accuracy))
+    
+    print("Accuracy: {:6.4f}".format(accuracy))
 
     #loading spacy
     nlp = en_core_web_sm.load()
@@ -52,22 +54,19 @@ if __name__ == "__main__":
 
     print("\033[1mTagging with Spacy\033[0m")
     
-    for id_sent,sent in enumerate(treebank.sents()[train_indx:]):
+    for id_sent,sent in enumerate(treebank.sents()[:train_indx:]):
         doc = nlp(" ".join(sent))
         break
 
     test = [(t.text, t.pos_) for t in doc]
 
-    for s in treebank.sents()[train_indx:]:
-        print("\033[1mINPUT:\033[0m {}".format(s))
-        reference = ngramTagger.tag(s)
-        break
-        
-    print("\033[1mREFERENCE:\033[0m {}".format(list(reference)))
-    print("\033[1mTAG:\033[0m {}".format(list(test)))
+   
+    print([t.tag_ for t in doc])
+    print("INPUT: {}".format([t.text for t in doc]))
+    print("TAG  : {}".format([(t.text, t.tag_) for t in doc]))
 
 
     #evaluation of the second test
-    accuracy = nlp_accuracy(reference, test)
+    accuracy = nlp_accuracy([t.text for t in doc], [t.tag_ for t in doc])
     print("\033[1mAccuracy of Spacy:\033[0m {:6.4f}".format(accuracy))
 

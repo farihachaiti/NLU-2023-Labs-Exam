@@ -6,7 +6,7 @@ from functions import *
 from pprint import pprint
 import nltk
 import spacy
-import spacy_conll
+from spacy_conll import init_parser
 nltk.download('dependency_treebank')
 from nltk.corpus import dependency_treebank
 from spacy.tokenizer import Tokenizer
@@ -37,8 +37,9 @@ if __name__ == "__main__":
 
 
     print("\033[1mParsing and Evaluating using Stanza\033[0m")
-
+    nlp = init_parser("nl", "stanza", parser_opts={"verbose": False})
     nlp = spacy_stanza.load_pipeline("en", verbose=False, tokenize_pretokenized=True)
+
     config = {"ext_names": {"conll_pd": "pandas"}, "conversion_maps": {"DEPREL": {"nsubj": "subj", "root" : "ROOT"}}}
 
     # Add the formatter to the pipeline

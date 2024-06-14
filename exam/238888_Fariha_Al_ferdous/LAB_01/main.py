@@ -25,22 +25,24 @@ def main():
     milton_chars = nltk.corpus.gutenberg.raw('milton-paradise.txt')
     milton_words = nltk.corpus.gutenberg.words('milton-paradise.txt')
     milton_sents = nltk.corpus.gutenberg.sents('milton-paradise.txt')
+    nltk.download('punkt')
 
+    # process the document with nltk
     milton_words_nltk = nltk.word_tokenize(milton_chars)
     milton_sents_nltk = nltk.sent_tokenize(milton_chars)
+    
+    txt = milton_chars
+    # process the document with spacy
+    doc = nlp(txt, disable=["tagger", "ner"])
+    tokens = [token.text.lower() for token in doc if not token.is_punct and not token.is_stop]
 
     #Descriptive statistics on the reference sentences and tokens
     print("\033[1mDescriptive statistics on the reference sentences and tokens\033[0m")
     statistics(milton_chars, milton_words, milton_sents)
-    
-
-    # process the document with spacy
-    doc = nlp(milton_chars)
-    tokens = [token.text for token in doc]
 
     #Descriptive statistics on the automatically processed corpus by spacy
     print("\033[1mDescriptive statistics on the automatically processed corpus by spacy\033[0m")
-    statistics(milton_chars, tokens, format(list(doc.sents)))
+    statistics(txt, tokens, format(list(doc.sents)))
 
 
     #Descriptive statistics on the automatically processed corpus by nltk

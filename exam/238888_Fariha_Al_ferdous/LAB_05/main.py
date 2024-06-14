@@ -38,15 +38,16 @@ if __name__ == "__main__":
 
 
     
-    print("\033[1m10 sentences with nltk.parse.generate.generate using starting symbole 'NP'\033[0m") 
+    print("\033[1m10 sentences with nltk.parse.generate.generate using starting symbole 'NP' and depth 10\033[0m") 
     start = Nonterminal('NP')
-    print_sentences(generate, grammer=grammer, start=start, n=10)
+    print_sentences(generate, grammer=grammer, start=start, n=10, d=10)
 
-    print("\033[1m10 sentences with nltk.parse.generate.generate using starting symbol 'VP'\033[0m") 
+    print("\033[1m10 sentences with nltk.parse.generate.generate using starting symbol 'VP' and depth 5\033[0m") 
     start = Nonterminal('VP')
-    print_sentences(generate, grammer=grammer, start=start, n=10)
+    print_sentences(generate, grammer=grammer, start=start, n=10, d=5)
 
     #10 sentences with PCFG.generate    
     print("\033[1m10 sentences with PCFG.generate\033[0m") 
-    toy_grammar = PCFG.fromstring(wght_rules)
-    print_sentences(toy_grammar.generate, grammer=None, start=None, n=10)
+    toy_grammar = PCFG.fromstring(wght_rules) 
+    print_sentences(PCFG.generate, grammer=toy_grammar, n=10)
+    
