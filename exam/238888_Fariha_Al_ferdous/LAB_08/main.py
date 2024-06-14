@@ -12,6 +12,7 @@ from sklearn.model_selection import cross_validate
 from sklearn.model_selection import StratifiedKFold
 import numpy as np
 nltk.download('senseval')
+nltk.download('averaged_perceptron_tagger')
 from nltk.corpus import senseval
 
 
@@ -57,62 +58,66 @@ if __name__ == "__main__":
     lblencoder = LabelEncoder()
     data = [" ".join([t[0] for t in inst.context]) for inst in senseval.instances('interest.pos')]
     lbls = [inst.senses[0] for inst in senseval.instances('interest.pos')]
-    stratified_split = StratifiedKFold(n_splits=5, shuffle=True)
-
-    vectors = vectorizer.fit_transform(data)
+    stratified_split = StratifiedKFold(n_splits=5, shuffle=True)  
     lblencoder.fit(lbls)
     labels = lblencoder.transform(lbls)
+    vectors = vectorizer.fit_transform(data)
     
+    #Extending collocational feature vectors
+    print("\033[1mEvaluation score for Extended Collocational Feature Vectors:\033[0m")
     #extending collocational features
     data_col = [extend_collocational_features(inst) for inst in senseval.instances('interest.pos')]
-    #results
-    print(data_col[0])
-
-
     dvectorizer = DictVectorizer(sparse=False)
     dvectors = dvectorizer.fit_transform(data_col)
-
-    #Concatenating BOW and new collocational feature vectors
-    uvectors = np.concatenate((vectors.toarray(), dvectors), axis=1)
-
     #evaluation
-    scores = cross_validate(classifier, uvectors, labels, cv=stratified_split, scoring=['f1_micro'])
+    scores = cross_validate(classifier, dvectors, labels, cv=stratified_split, scoring=['f1_micro'])
 
     #results
+    print("{:.3f}".format(sum(scores['test_f1_micro'])/len(scores['test_f1_micro'])))
+    
+
+    #Concatenating BOW and new collocational feature vectors
     print("\033[1mEvaluation score for Concatenated BAO and Extended Collocational Feature Vectors:\033[0m")
+
+
+    uvectors = np.concatenate((vectors.toarray(), dvectors), axis=1)
+
+    #evaliuation 
+    scores = cross_validate(classifier, uvectors, labels, cv=stratified_split, scoring=['f1_micro'])
+     #results
     print("{:.3f}".format(sum(scores['test_f1_micro'])/len(scores['test_f1_micro'])))
 
-    #evaluating original lesk and lesk similarity
+    #evaluating original lesk and lesk similarity\
+    
 
     for i, inst in enumerate(senseval.instances('interest.pos')):
         txt = [t[0] for t in inst.context]
-        raw_ref = inst.senses[0] # let's get first sense
         hyp = original_lesk(txt, txt[inst.position], synsets=synsets, majority=True).name()
         hyp2 = lesk_similarity(txt, txt[inst.position], similarity="resnik", synsets=synsets, majority=True).name()
-        ref = mapping.get(raw_ref)
         
         # for precision, recall, f-measure        
-        refs[ref].add(i)
         hyps[hyp].add(i)
         hyps2[hyp2].add(i)
         
         
         # for accuracy
-        refs_list.append(ref)
         hyps_list.append(hyp)
         hyps_list2.append(hyp2)
 
-    print("\033[1mFor Original Lesk:\033[0m Acc:", round(accuracy(refs_list, hyps_list), 3))
-    print("\033[1mFor Lesk Similarity:\033[0m Acc:", round(accuracy(refs_list, hyps_list2), 3))
+    print("\033[1mEvaluation score for Original Lesk:\033[0m")
+    #evaluation
+    scores = cross_validate(classifier, vectors, hyps_list, cv=stratified_split, scoring=['f1_micro'])
 
-    for cls in hyps.keys():
-        p = precision(refs[cls], hyps[cls])
-        r = recall(refs[cls], hyps[cls])
-        f = f_measure(refs[cls], hyps[cls], alpha=1)
-    print("\033[1mEvaluation score For Original Lesk:\033[0m p={:.3f}; r={:.3f}; f={:.3f}; s={}".format(p, r, f, len(refs[cls])))
+    #results
+    print("{:.3f}".format(sum(scores['test_f1_micro'])/len(scores['test_f1_micro'])))
 
-    for cls in hyps2.keys():  
-        p = precision(refs[cls], hyps2[cls])
-        r = recall(refs[cls], hyps2[cls])
-        f = f_measure(refs[cls], hyps2[cls], alpha=1)
-    print("\033[1mEvaluation score For Lesk Similarity:\033[0m p={:.3f}; r={:.3f}; f={:.3f}; s={}".format(p, r, f, len(refs[cls])))
+    print("\033[1mEvaluation score for Lesk Similarity:\033[0m")
+    #evaluation
+    scores = cross_validate(classifier, vectors, hyps_list2, cv=stratified_split, scoring=['f1_micro'])
+
+    #results
+    print("{:.3f}".format(sum(scores['test_f1_micro'])/len(scores['test_f1_micro'])))
+
+    print("\033[1mAs we can see, Accuracy for Less Similarity is less than the one for Original Lesk\033[0m")
+
+    
