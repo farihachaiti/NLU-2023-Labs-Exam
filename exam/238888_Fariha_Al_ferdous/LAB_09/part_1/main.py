@@ -62,15 +62,15 @@ if __name__ == "__main__":
             losses_train.append(np.asarray(loss).mean())
             ppl_dev, loss_dev = eval_loop(dev_loader, criterion_eval, model)
             losses_dev.append(np.asarray(loss_dev).mean())
-            pbar.set_description("PPL: %f" % ppl_dev)
             if  ppl_dev < best_ppl: # the lower, the better
                 best_ppl = ppl_dev
                 best_model = copy.deepcopy(model).to('cpu')
                 patience = 3
             else:
                 patience -= 1
-                
+            pbar.set_description("PPL: %f" % best_ppl)
             if patience <= 0: # Early stopping with patience
+                
                 break # Not nice but it keeps the code clean
     #saving model                
     best_model.to(device)
@@ -122,14 +122,14 @@ if __name__ == "__main__":
             losses_train.append(np.asarray(loss).mean())
             ppl_dev, loss_dev = eval_loop(dev_loader, criterion_eval, model)
             losses_dev.append(np.asarray(loss_dev).mean())
-            pbar.set_description("PPL: %f" % ppl_dev)
+            
             if  ppl_dev < best_ppl: # the lower, the better
                 best_ppl = ppl_dev
                 best_model = copy.deepcopy(model).to('cpu')
                 patience = 3
             else:
                 patience -= 1
-                
+            pbar.set_description("PPL: %f" % best_ppl)
             if patience <= 0: # Early stopping with patience
                 break # Not nice but it keeps the code clean
                             
@@ -146,7 +146,7 @@ if __name__ == "__main__":
 
     print("\033[1mPPL using LSTM with two dropout layers and AdamW:\033[0m")
 
-    optimizer = optim.AdamW(model.parameters(), lr=lr) #replaced SGD with AdamW
+    optimizer = optim.AdamW(model.parameters(), lr=lr, weight_decay=0.001) #replaced SGD with AdamW
     criterion_train = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"])
     criterion_eval = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"], reduction='sum')
 
@@ -166,14 +166,14 @@ if __name__ == "__main__":
             losses_train.append(np.asarray(loss).mean())
             ppl_dev, loss_dev = eval_loop(dev_loader, criterion_eval, model)
             losses_dev.append(np.asarray(loss_dev).mean())
-            pbar.set_description("PPL: %f" % ppl_dev)
+            
             if  ppl_dev < best_ppl: # the lower, the better
                 best_ppl = ppl_dev
                 best_model = copy.deepcopy(model).to('cpu')
                 patience = 3
             else:
                 patience -= 1
-                
+            pbar.set_description("PPL: %f" % best_ppl)
             if patience <= 0: # Early stopping with patience
                 break # Not nice but it keeps the code clean
                             
