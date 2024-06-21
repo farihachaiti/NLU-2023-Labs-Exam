@@ -47,13 +47,13 @@ if __name__ == "__main__":
     criterion_eval = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"], reduction='sum')
 
     n_epochs = 100
-    patience = 3
+    patience = 50
     losses_train = []
     losses_dev = []
     sampled_epochs = []
     best_ppl = math.inf
     best_model = model
-    pbar = tqdm(range(1,n_epochs))
+    pbar = tqdm(range(1,n_epochs+1))
     for epoch in pbar:
         loss = train_loop(train_loader, optimizer, criterion_train, model, clip)    
         
@@ -65,7 +65,7 @@ if __name__ == "__main__":
             if  ppl_dev < best_ppl: # the lower, the better
                 best_ppl = ppl_dev
                 best_model = copy.deepcopy(model).to('cpu')
-                patience = 3
+                patience += 50
             else:
                 patience -= 1
             pbar.set_description("PPL: %f" % best_ppl)
@@ -107,13 +107,13 @@ if __name__ == "__main__":
 
 
     n_epochs = 100
-    patience = 3
+    patience = 50
     losses_train = []
     losses_dev = []
     sampled_epochs = []
     best_ppl = math.inf
     best_model = model
-    pbar = tqdm(range(1,n_epochs))
+    pbar = tqdm(range(1,n_epochs+1))
     for epoch in pbar:
         loss = train_loop(train_loader, optimizer, criterion_train, model, clip)    
         
@@ -126,7 +126,7 @@ if __name__ == "__main__":
             if  ppl_dev < best_ppl: # the lower, the better
                 best_ppl = ppl_dev
                 best_model = copy.deepcopy(model).to('cpu')
-                patience = 3
+                patience += 50
             else:
                 patience -= 1
             pbar.set_description("PPL: %f" % best_ppl)
@@ -151,17 +151,17 @@ if __name__ == "__main__":
     criterion_eval = nn.CrossEntropyLoss(ignore_index=lang.word2id["<pad>"], reduction='sum')
 
     n_epochs = 100
-    patience = 3
+    patience = 50
     losses_train = []
     losses_dev = []
     sampled_epochs = []
     best_ppl = math.inf
     best_model = model
-    pbar = tqdm(range(1,n_epochs))
+    pbar = tqdm(range(1,n_epochs+1))
     for epoch in pbar:
         loss = train_loop(train_loader, optimizer, criterion_train, model, clip)    
         
-        if epoch % 1 == 0:
+        if epoch % 5 == 0:
             sampled_epochs.append(epoch)
             losses_train.append(np.asarray(loss).mean())
             ppl_dev, loss_dev = eval_loop(dev_loader, criterion_eval, model)
@@ -170,7 +170,7 @@ if __name__ == "__main__":
             if  ppl_dev < best_ppl: # the lower, the better
                 best_ppl = ppl_dev
                 best_model = copy.deepcopy(model).to('cpu')
-                patience = 3
+                patience += 50
             else:
                 patience -= 1
             pbar.set_description("PPL: %f" % best_ppl)
@@ -179,7 +179,7 @@ if __name__ == "__main__":
                             
     best_model.to(device)
     # Specify the path to save the bin file
-    bin_file_path = "bin/model_with_dropout.bin"
+    bin_file_path = "bin/model_with_dropout_and_adamw.bin"
 
     # Save the model to the bin file
     torch.save(best_model.state_dict(), bin_file_path)

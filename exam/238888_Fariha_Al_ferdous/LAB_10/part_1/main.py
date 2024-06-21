@@ -8,6 +8,7 @@ from model import *
 import torch.optim as optim
 import matplotlib.pyplot as plt
 from tqdm import tqdm
+import math
 
 if __name__ == "__main__":
     #Wrtite the code to load the datasets and to run your functions
@@ -33,12 +34,12 @@ if __name__ == "__main__":
 
 
     n_epochs = 200
-    patience = 3
+    patience = 50
     losses_train = []
     losses_dev = []
     sampled_epochs = []
-    best_f1 = 0
-    for x in tqdm(range(1,n_epochs)):
+    best_f1 = math.inf
+    for x in tqdm(range(1,n_epochs+1)):
         loss = train_loop(train_loader, optimizer, criterion_slots,
                         criterion_intents, model)
         if x % 5 == 0:
@@ -49,15 +50,15 @@ if __name__ == "__main__":
             losses_dev.append(np.asarray(loss_dev).mean())
             f1 = results_dev['total']['f']
 
-            if f1 > best_f1:
+            if f1 < best_f1:
                 best_f1 = f1
-                patience = 3
+                patience += 50
             else:
                 patience -= 1
             if patience <= 0: # Early stopping with patience
                 break # Not nice but it keeps the code clean
     
-    bin_file_path = "model.bin"
+    bin_file_path = "bin/model.bin"
 
     # Save the model to the bin file
     torch.save(model.state_dict(), bin_file_path)

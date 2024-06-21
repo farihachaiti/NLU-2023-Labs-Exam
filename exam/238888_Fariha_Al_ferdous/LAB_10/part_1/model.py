@@ -11,12 +11,12 @@ class ModelIAS(nn.Module):
         # emb_size = word embedding size
 
         self.embedding = nn.Embedding(vocab_len, emb_size, padding_idx=pad_index)
-
-        self.utt_encoder = nn.LSTM(emb_size, hid_size, n_layer, bidirectional=True) #setting bidirectionality=true
+        #setting bidirectionality=true
+        self.utt_encoder = nn.LSTM(emb_size, hid_size, n_layer, bidirectional=True) 
         self.slot_out = nn.Linear(hid_size*2, out_slot)
         self.intent_out = nn.Linear(hid_size, out_int)
-        # Dropout layer How do we apply it?
-        self.dropout = nn.Dropout(0.1) #adding dropout layer
+        #adding dropout layer
+        self.dropout = nn.Dropout(0.1) 
 
     def forward(self, utterance, seq_lengths):
         utt_emb = self.embedding(utterance) # utt_emb.size() = batch_size X seq_len X emb_size

@@ -39,41 +39,42 @@ if __name__ == "__main__":
 
 
     n_epochs = 100
-    patience = 3
+    patience = 50
     losses_train = []
     losses_dev = []
     sampled_epochs = []
     best_ppl = math.inf
     best_model = model
     best_loss = []
-    pbar = tqdm(range(1,n_epochs))
+    pbar = tqdm(range(1,n_epochs+1))
 
     # Initialize both optimizers
     optimizer_asgd = optim.ASGD(model.parameters(), lr=lr, t0=0, lambd=0., weight_decay=1.2e-6)
     optimizer_adamw = optim.AdamW(model.parameters(), lr=lr)
     optimizer = optimizer_adamw
     for epoch in pbar:
-        if len(best_loss) > 3 and np.mean(best_loss[-3:])>3:
-            optimizer = optimizer_asgd
+        #Applying non-monotonic ASGD taking threshold for window size of 10:
+        if epoch % 1 == 0:
+            if len(best_loss)>= 10 and np.mean(best_loss[-10:])>1:
+                optimizer = optimizer_asgd
         else:
             optimizer = optimizer_adamw
         loss = train_loop(train_loader, optimizer, criterion_train, model, clip)
         best_loss.append(loss)
-        if epoch % 1 == 0:
-            sampled_epochs.append(epoch)
-            losses_train.append(np.asarray(loss).mean())
-            ppl_dev, loss_dev = eval_loop(dev_loader, criterion_eval, model)
-            losses_dev.append(np.asarray(loss_dev).mean())
-            
-            if  ppl_dev < best_ppl: # the lower, the better
-                best_ppl = ppl_dev
-                best_model = copy.deepcopy(model).to('cpu')
-                patience = 3
-            else:
-                patience -= 1
-            pbar.set_description("PPL: %f" % best_ppl)
-            if patience <= 0: # Early stopping with patience
-                break # Not nice but it keeps the code clean            
+        sampled_epochs.append(epoch)
+        losses_train.append(np.asarray(loss).mean())
+        ppl_dev, loss_dev = eval_loop(dev_loader, criterion_eval, model)
+        losses_dev.append(np.asarray(loss_dev).mean())
+        
+        if  ppl_dev < best_ppl: # the lower, the better
+            best_ppl = ppl_dev
+            best_model = copy.deepcopy(model).to('cpu')
+            patience += 50
+        else:
+            patience -= 1
+        pbar.set_description("PPL: %f" % best_ppl)
+        if patience <= 0: # Early stopping with patience
+            break # Not nice but it keeps the code clean            
     best_model.to(device)
     # Specify the path to save the bin file
     bin_file_path = "bin/model.bin"

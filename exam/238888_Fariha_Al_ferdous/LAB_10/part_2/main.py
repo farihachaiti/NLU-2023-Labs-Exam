@@ -19,7 +19,7 @@ if __name__ == "__main__":
     out_int = len(lang.intent2id)
     vocab_len = len(lang.word2id)
 
-    model = ModelIAS(vocab_len, out_int, out_slot)
+    model = BERTModel(vocab_len, out_int, out_slot)
 
     optimizer = Adam(learning_rate=lr, epsilon=e)
     
@@ -35,10 +35,10 @@ if __name__ == "__main__":
 
 
 
-    history = model.fit(
+    model.fit(
         [train_input_ids,train_attention_masks], (train_slots, train_labels),
         validation_data=([dev_input_ids,dev_attention_masks], (dev_slots, dev_labels)),
-        epochs=15, batch_size=128)
+        epochs=100, batch_size=128)
 
     # Save the model to the bin file
     model.save("bin/saved_model")

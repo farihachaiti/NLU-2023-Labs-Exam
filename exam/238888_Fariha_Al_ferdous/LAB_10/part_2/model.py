@@ -22,7 +22,7 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, Learnin
 import matplotlib.pyplot as plt
 
 
-class ModelIAS(tf.keras.Model):
+class BERTModel(tf.keras.Model):
 
     def __init__(self, max_len, total_intent_no, total_slot_no, dropout_prob=0.5):
         super().__init__()
