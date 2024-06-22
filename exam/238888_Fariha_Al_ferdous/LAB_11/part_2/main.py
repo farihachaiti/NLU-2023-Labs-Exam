@@ -34,19 +34,12 @@ if __name__ == "__main__":
     aspects_train_fixed = [(target, 'None' if opinion is None else opinion) for target, opinion in aspects_train]
     aspects_test_fixed = [(target, 'None' if opinion is None else opinion) for target, opinion in aspects_test]
 
-    # Extracting targets and opinions separately
-    targets_trn = [target for target, _ in aspects_train]
-    opinions_trn = [opinion for _, opinion in aspects_train]
 
     half_len = len(aspects_train_fixed) // 2
 
     ref_trn = numpy.array([0] * half_len + [1] * half_len)
 
-    
 
-    # Extracting targets and opinions separately
-    targets_tst = [target for target, _ in aspects_test]
-    opinions_tst = [opinion for _, opinion in aspects_test]
 
     half_len = len(aspects_test_fixed) // 2
 
