@@ -5,51 +5,125 @@
 from functions import *
 from utils import *
 from model import *
-import torch.optim as optim
+from sklearn.model_selection import cross_validate
+from sklearn.metrics import classification_report
+import numpy
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.model_selection import train_test_split
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import f1_score
+from sklearn.model_selection import StratifiedKFold
+import pickle
 
 if __name__ == "__main__":
     #Wrtite the code to load the datasets and to run your functions
     # Print the results
 
-    #train and evaluate the custom BERT model
-    lr = 0.0001 # learning rate
-    e = 1e-08
+    # Train and test with Stratified K Fold
 
-    out_slot = len(lang.slot2id)
-    out_int = len(lang.intent2id)
-    vocab_len = len(lang.word2id)
+    skf = StratifiedKFold(n_splits=10, random_state=42, shuffle=True)
+    scores_clf = []
 
-    model = BERTModel(vocab_len, out_int, out_slot)
+    #Task 1: Extraction of Aspect Terms
 
-    optimizer = Adam(learning_rate=lr, epsilon=e)
+    # Extracting Aspect terms
+    aspects_train = extract(nlp(' '.join(train_raw)))
+    aspects_test = extract(nlp(' '.join(test_raw)))
+
+    # Replace None with 'None' in aspects_train and aspects_test
+    aspects_train_fixed = [(target, 'None' if opinion is None else opinion) for target, opinion in aspects_train]
+    aspects_test_fixed = [(target, 'None' if opinion is None else opinion) for target, opinion in aspects_test]
+
+    # Extracting targets and opinions separately
+    targets_trn = [target for target, _ in aspects_train]
+    opinions_trn = [opinion for _, opinion in aspects_train]
+
+    half_len = len(aspects_train_fixed) // 2
+
+    ref_trn = numpy.array([0] * half_len + [1] * half_len)
+
     
-    losses = [SparseCategoricalCrossentropy(from_logits=False),
-            SparseCategoricalCrossentropy(from_logits=False)]
-    metrics = [SparseCategoricalAccuracy(name='slot_accuracy'), SparseCategoricalAccuracy(name='intent_accuracy')]
 
-    model.compile(optimizer=optimizer, loss=losses, metrics=metrics)
+    # Extracting targets and opinions separately
+    targets_tst = [target for target, _ in aspects_test]
+    opinions_tst = [opinion for _, opinion in aspects_test]
 
-    train_input_ids, train_attention_masks, train_token_type_ids, train_labels, train_slots = prepare_dataset(train_raw, model)
-    dev_input_ids, dev_attention_masks, dev_token_type_ids, dev_labels, dev_slots = prepare_dataset(dev_raw, model)
-    test_input_ids, test_attention_masks, test_token_type_ids, test_labels, test_slots = prepare_dataset(test_raw, model)
+    half_len = len(aspects_test_fixed) // 2
 
+    ref_tst = numpy.array([0] * half_len + [1] * half_len)
 
+    for i, ((train_index, train_index), (test_index, test_index)) in enumerate(zip(skf.split(aspects_train_fixed, ref_trn), skf.split(aspects_test_fixed, ref_tst))):
 
-    model.fit(
-        [train_input_ids,train_attention_masks], (train_slots, train_labels),
-        validation_data=([dev_input_ids,dev_attention_masks], (dev_slots, dev_labels)),
-        epochs=100, batch_size=128)
-
-    # Save the model to the bin file
-    model.save("bin/saved_model")
-
-    result = model.evaluate([test_input_ids,test_attention_masks], (test_slots, test_labels))
+        x_train, x_test = [' '.join(aspects_train_fixed[idx]) for idx in train_index if aspects_train[idx] is not None], [' '.join(aspects_test_fixed[idx]) for idx in test_index if aspects_test[idx] is not None]
+        y_train, y_test = [ref_trn[idx] for idx in train_index], [ref_tst[idx] for idx in test_index]
 
 
-    #results
-    print("\033[1mResults of BERT MODEL:\033[0m")
-    print(f'Loss: {result[0]}')
-    print(f'Slot Loss: {result[1]}')
-    print(f'Intent Loss: {result[2]}')
-    print(f'Slot Accuracy: {result[3]}')
-    print(f'Intent Accuracy: {result[4]}')
+        vectorizer = CountVectorizer()
+        vectorizer.fit(x_train)
+        train_features = vectorizer.transform(x_train)
+        test_features = vectorizer.transform(x_test)
+
+        clf = MLPClassifier(random_state=1, max_iter=300).fit(train_features, y_train)
+
+        hyp = clf.predict(test_features)
+        scores_clf.append(f1_score(y_test, hyp, average='macro'))
+
+    #saving model
+    model_filename = 'bin/mlp_classifier_model_extract_aspects.pkl'
+    with open(model_filename, 'wb') as model_file:
+        pickle.dump(clf, model_file)  
+
+    #results 
+    print('\033[1mF1 classifier Extraction of aspect terms:\033[0m', round(sum(scores_clf)/len(scores_clf), 3))
+    print('\033[1mExtraction of Aspect terms: Classification Report\033[0m:')
+    print(classification_report(y_test, hyp))
+
+
+    #Task 2: Polarity of Aspect Terms
+
+
+    rev_t_pos, rev_o_pos, rev_t_neg, rev_o_neg = polarity_aspect(aspects_train, analyzer)
+    corpus_trn = [lol2str(d) for d in rev_t_neg] + [lol2str(d) for d in rev_t_pos] + [lol2str(d) for d in rev_o_neg] + [lol2str(d) for d in rev_o_pos]
+
+    ref_trn = numpy.array([0] * len(rev_t_neg) + [1] * len(rev_t_pos) + [2] * len(rev_o_neg) + [3] * len(rev_o_pos))
+
+    rev_t_pos2, rev_o_pos2, rev_t_neg2, rev_o_neg2 = polarity_aspect(aspects_test, analyzer)
+    corpus_tst = [lol2str(d) for d in rev_t_neg2] + [lol2str(d) for d in rev_t_pos2] + [lol2str(d) for d in rev_o_neg2] + [lol2str(d) for d in rev_o_pos2]
+
+
+    ref_tst = numpy.array([0] * len(rev_t_neg2) + [1] * len(rev_t_pos2) + [2] * len(rev_o_neg2) + [3] * len(rev_o_pos2))
+
+
+
+    for i, ((train_index, train_index), (test_index, test_index)) in enumerate(zip(skf.split(corpus_trn, ref_trn), skf.split(corpus_tst, ref_tst))):
+
+        x_train, x_test = [corpus_trn[idx] for idx in train_index], [corpus_tst[idx] for idx in test_index]
+        y_train, y_test = [ref_trn[idx] for idx in train_index], [ref_tst[idx] for idx in test_index]
+
+
+        vectorizer = CountVectorizer()
+        vectorizer.fit(x_train)
+        train_features = vectorizer.transform(x_train)
+        test_features = vectorizer.transform(x_test)
+
+        clf = MLPClassifier(random_state=1, max_iter=300).fit(train_features, y_train)
+   
+        hyp = clf.predict(test_features)
+        scores_clf.append(f1_score(y_test, hyp, average='macro'))
+
+    #saving model
+    model_filename = 'bin/mlp_classifier_model.pkl'
+    with open(model_filename, 'wb') as model_file:
+        pickle.dump(clf, model_file)  
+
+
+
+
+    #results 
+    print('\033[1mF1 classifier Polarity of aspect terms:\033[0m', round(sum(scores_clf)/len(scores_clf), 3))
+    print('\033[1mPolarity of Aspect terms: Classification Report\033[0m:')
+    print(classification_report(y_test, hyp))
+
+
+    print('\033[1mSEMEVAL Polarity of aspect terms:\033[0m')
+    print(aspect_polarity_estimation(y_test, hyp))
